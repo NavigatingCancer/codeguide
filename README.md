@@ -12,42 +12,42 @@
 
 A codeguide is a valuable tool for teams who:
 
-- Build and maintain products for a reasonable length of time
-- Have developers of differing abilities and specialisms
-- Have a number of different developers working on a product at any given time
-- On-board new staff regularly
-- Have a number of codebases that developers dip in and out of
+- Build and maintain products for a reasonable length of time.
+- Have developers of differing abilities and specialisms.
+- Have a number of different developers working on a product at any given time.
+- On-board new staff regularly.
+- Have a number of codebases that developers dip in and out of.
 
 Whilst codeguides are typically more suited to product teams—large codebases on long-lived and evolving projects, with multiple developers contributing over prolonged periods of time—all developers should strive for a degree of standardization in their code.
 
 A good codeguide, when well followed, will:
 
-- Set the standard for code quality across a codebase
-- Promote consistency across codebases
-- Give developers a feeling of familiarity across codebases
-- Increase productivity
+- Set the standard for code quality across a codebase.
+- Promote consistency across codebases.
+- Give developers a feeling of familiarity across codebases.
+- Increase productivity.
 
 Codeguides should be learned, understood, and implemented at all times on a project which is governed by one, and any deviation must be fully justified.
 
 ## General
 ### Don’ts
 
-- Avoid using HTML tags in CSS selectors
-  - E.g. Prefer `.o-modal {}` over `div.o-modal {}`
-  - Always prefer using a class over HTML tags (with some exceptions like CSS resets)
-- Don’t use IDs in selectors
-  - `#header` is overly specific compared to, for example `.header` and is much harder to override
+- Avoid using HTML tags in CSS selectors.
+  - E.g. Prefer `.o-modal {}` over `div.o-modal {}`.
+  - Always prefer using a class over HTML tags (with some exceptions like CSS resets).
+- Don’t use IDs in selectors.
+  - `#header` is overly specific compared to, for example `.header` and is much harder to override.
   - Read more about the headaches associated with IDs in CSS [here](http://csswizardry.com/2011/09/when-using-ids-can-be-a-pain-in-the-class/).
-- Don’t nest more than 3 levels deep
+- Don’t nest more than 3 levels deep.
   - Nesting selectors increases specificity, meaning that overriding any CSS set therein needs to be targeted with an even more specific selector. This quickly becomes a significant maintenance issue.
 - Avoid using nesting for anything other than pseudo selectors and state selectors.
   - E.g. nesting `:hover`, `:focus`, `::before`, etc. is OK, but nesting selectors inside selectors should be avoided.
-- Don’t `!important`
+- Don’t `!important`.
   - Ever.
-  - If you must, leave a comment, and prioritise resolving specificity issues before resorting to `!important`.
+  - If you must, leave a comment, and prioritize resolving specificity issues before resorting to `!important`.
   - `!important` greatly increases the power of a CSS rule, making it extremely tough to override in the future. It’s only possible to override with another `!important` rule later in the cascade.
 - Don’t use `margin-top`.
-  - Vertical margins [collapse](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing). Always prefer `padding-top` or`margin-bottom` on preceding elements
+  - Vertical margins [collapse](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing). Always prefer `padding-top` or`margin-bottom` on preceding elements.
 - Avoid shorthand properties (unless you really need them)
   - It can be tempting to use, for instance, `background: #fff` instead of `background-color: #fff`, but doing so overrides other values encapsulated by the shorthand property. (In this case, `background-image` and its associative properties are set to “none.”
   - This applies to all properties with a shorthand: border, margin, padding, font, etc.
