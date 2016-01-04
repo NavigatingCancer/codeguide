@@ -27,11 +27,10 @@ A good codeguide, when well followed, will:
 - Give developers a feeling of familiarity across codebases.
 - Increase productivity.
 
-provide a consistent and sane environment;
-accommodate change;
-grow and scale your codebase;
-promote reuse and efficiency;
-increase productivity.
+- provide a consistent and sane environment;
+- accommodate change;
+- grow and scale your codebase;
+- promote reuse and efficiency;
 
 Codeguides should be learned, understood, and implemented at all times on a project which is governed by one, and any deviation must be fully justified.
 
