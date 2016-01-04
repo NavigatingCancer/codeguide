@@ -1,6 +1,6 @@
 # (S)CSS Codeguide
 
-> “Every line of code should appear to be written by a single person, no matter the number of contributors.” —@mdo
+> “Every line of code should appear to be written by a single person, no matter the number of contributors.” -@mdo
 
 ## Goals
 - Keep stylesheets maintainable
@@ -18,7 +18,7 @@ A codeguide is a valuable tool for teams who:
 - On-board new staff regularly.
 - Have a number of codebases that developers dip in and out of.
 
-Whilst codeguides are typically more suited to product teams—large codebases on long-lived and evolving projects, with multiple developers contributing over prolonged periods of time—all developers should strive for a degree of standardization in their code.
+Whilst codeguides are typically more suited to product teams-large codebases on long-lived and evolving projects, with multiple developers contributing over prolonged periods of time-all developers should strive for a degree of standardization in their code.
 
 A good codeguide, when well followed, will:
 
@@ -26,6 +26,12 @@ A good codeguide, when well followed, will:
 - Promote consistency across codebases.
 - Give developers a feeling of familiarity across codebases.
 - Increase productivity.
+
+provide a consistent and sane environment;
+accommodate change;
+grow and scale your codebase;
+promote reuse and efficiency;
+increase productivity.
 
 Codeguides should be learned, understood, and implemented at all times on a project which is governed by one, and any deviation must be fully justified.
 
@@ -75,7 +81,7 @@ Codeguides should be learned, understood, and implemented at all times on a proj
 - Use leading zeros for decimal values `opacity: 0.4;` instead of `opacity: .4;`
 - Put spaces before and after child selector `div > span` instead of `div>span`
 
-—————
+----------
 
 ## Sass Specifics
 ### Internal order of a .scss file
@@ -88,25 +94,25 @@ Codeguides should be learned, understood, and implemented at all times on a proj
 Example:
 
 ```scss
-//———————————————
+//------------------------------
 // Modal
-//———————————————
+//------------------------------
 
-@import “../constants”;
-@import “../helpers”;
+@import "../constants";
+@import "../helpers";
 
-$DBmodal-namespace: “c-modal” !default;
+$DBmodal-namespace: "c-modal" !default;
 $DBmodal-padding: 32px;
 
 $DBmodal-background: #fff !default;
 $DBmodal-background-alt: color(gray, x-light) !default;
 
-.o-modal { … }
+.o-modal { ... }
 
-// Many lines later…
+// Many lines later...
 
 // EXPERIMENT: experiment-rule-name
-.o-modal———————————————experiment { … }
+.o-modal--experiment { ... }
 // END EXPERIMENT: experiment-rule-name
 ```
 
@@ -148,11 +154,11 @@ Wrap experiment styles with comments:
 
 ```scss
 // EXPERIMENT: experiment-rule-name
-.stuff { … }
+.stuff { ... }
 // END EXPERIMENT: experiment-rule-name
 ```
 
-—————
+----------
 
 ## Rule Ordering
 
@@ -178,7 +184,7 @@ Here’s a comprehensive example:
 
 ```scss
 .c-btn {
-    @extend %link—————plain;
+    @extend %link--plain;
 
     display: inline-block;
     padding: 6px 12px;
@@ -191,14 +197,14 @@ Here’s a comprehensive example:
     color: white;
 
     &::before {
-        content: ‘’;
+        content: '';
     }
 
     &:focus, &:hover {
         box-shadow: 0 0 0 1px color(blue, .3);
     }
 
-    &—————big {
+    &--big {
         padding: 12px 24px;
     }
 
@@ -208,7 +214,7 @@ Here’s a comprehensive example:
 }
 ```
 
-—————
+----------
 
 ## Nesting
 
@@ -218,7 +224,7 @@ Here’s a comprehensive example:
   .block {
       padding: 24px;
 
-      &—————mini {
+      &--mini {
           padding: 12px;
       }
   }
@@ -226,7 +232,7 @@ Here’s a comprehensive example:
 
 Nesting can be really easily avoided by smart class naming (with the help of BEM) and avoiding bare tag selectors.
 
-—————
+----------
 
 ## BEM
 
@@ -239,26 +245,26 @@ Element: styles that only apply to children of a block. Elements can also be blo
 - `.expanding-section__section`
 
 Modifier: override or extend the base styles of a block or element with modifier styles. Class name is a concatenation of the block (or element) name, two hyphens and the modifier name. Examples:
-- `.alert-box—————success`
-- `.expanding-section—————expanded`
+- `.alert-box--success`
+- `.expanding-section--expanded`
 
 ### BEM Best practices
 
-Don’t `@extend` block modifiers with the block base.
-- Good: `<div class=“my-block my-block—————modifier”>`
-- Bad: `<div class=“my-block—————modifier”>`
+Don't `@extend` block modifiers with the block base.
+- Good: `<div class="my-block my-block--modifier">`
+- Bad: `<div class="my-block--modifier">`
 
-Don’t create elements inside elements. If you find yourself needing this, consider converting your element into a block.
+Don't create elements inside elements. If you find yourself needing this, consider converting your element into a block.
 - Bad: `.alert-box__close__button`
 
 Choose your modifiers wisely. These two rules have very different meaning:
 
 ```scss
-.block—————modifier .block__element { color: red; }
-.block__element—————modifier { color: red; }
+.block--modifier .block__element { color: red; }
+.block__element--modifier { color: red; }
 ```
 
-—————
+----------
 
 ## Selector Naming
 
@@ -267,21 +273,21 @@ Choose your modifiers wisely. These two rules have very different meaning:
 - Use Sass’s nesting to manage BEM selectors like so:
   ```scss
   .block {
-      &—modifier { // compiles to .block—modifier
+      &--modifier { // compiles to .block--modifier
           text-align: center;
       }
 
       &__element { // compiles to .block__element
           color: red;
 
-          &—modifier { // compiles to .block__element—modifier
+          &--modifier { // compiles to .block__element--modifier
               color: blue;
           }
       }
   }
   ```
 
-—————
+----------
 
 ## Namespaced Classes
 
@@ -294,7 +300,7 @@ There are a few reserved namespaces for classes to provide common and globally-a
 - `._` for hacks. Classes with a hack namespace should be used when you need to force a style with `!important` or increasing specificity, should be temporary, and should not be bound onto.
 - `.t-` for theme classes. Pages with unique styles or overrides for any objects or components should make use of theme classes.
 
-—————
+----------
 
 ## Separation of Concerns (One Thing Well™)
 
@@ -303,7 +309,7 @@ You should always try to spot common code—padding, font sizes, layout patterns
 ```scss
 // Bad code
 // HTML:
-// <div class=“modal compact”>…</div>
+// <div class="modal compact">...</div>
 .modal {
     padding: 32px;
     background-color: color(gray, x-light);
@@ -315,8 +321,8 @@ You should always try to spot common code—padding, font sizes, layout patterns
 
 // Good code
 // HTML:
-// <div class=“c-modal u-l-island”>…</div>
-// <div class=“c-modal u-l-isle”>…</div>
+// <div class="c-modal u-l-island">...</div>
+// <div class="c-modal u-l-isle">...</div>
 
 // components/_modal.scss
 .c-modal {
@@ -333,7 +339,7 @@ You should always try to spot common code—padding, font sizes, layout patterns
 }
 ```
 
-—————
+----------
 
 ## Media Queries
 
@@ -352,7 +358,7 @@ Media queries should be within the CSS selector as per SMACSS
 Create variables for frequently used breakpoints
 
 ```scss
-$SCREEN_SM_MAX: “max-width: 767px”;
+$SCREEN_SM_MAX: "max-width: 767px";
 
 .selector {
       float: left;
