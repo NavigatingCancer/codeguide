@@ -2,6 +2,16 @@
 
 > “Every line of code should appear to be written by a single person, no matter the number of contributors.” -@mdo
 
+## Table Of Contents
+- [Goals](#goals)
+- [Why A Codeguide](#why-a-codeguide)
+- [General](#general)
+  - [Do Not](#do-not)
+  - [Spacing](#spacing)
+  - [Formatting](#formatting)
+- [Sass Specifics](#sass-specifics)
+  - [Internal Order Of An .scss File](#internal-order-of-an-.scss-file)
+
 ## Goals
 - Keep stylesheets maintainable
 - Keep code transparent, sane, and readable
@@ -9,7 +19,6 @@
 - Minimize side effects
 
 ## Why A Codeguide?
-
 A codeguide is a valuable tool for teams who:
 
 - Build and maintain products for a reasonable length of time.
@@ -18,24 +27,21 @@ A codeguide is a valuable tool for teams who:
 - On-board new staff regularly.
 - Have a number of codebases that developers dip in and out of.
 
-Whilst codeguides are typically more suited to product teams-large codebases on long-lived and evolving projects, with multiple developers contributing over prolonged periods of time-all developers should strive for a degree of standardization in their code.
-
 A good codeguide, when well followed, will:
 
 - Set the standard for code quality across a codebase.
-- Promote consistency across codebases.
+- Promote consistency and sanity across codebases.
 - Give developers a feeling of familiarity across codebases.
 - Increase productivity.
 
-- provide a consistent and sane environment;
-- accommodate change;
-- grow and scale your codebase;
-- promote reuse and efficiency;
-
 Codeguides should be learned, understood, and implemented at all times on a project which is governed by one, and any deviation must be fully justified.
 
+## A Bit About Front-end Architecture
+
+
+
 ## General
-### Don’ts
+### Do Not
 
 - Avoid using HTML tags in CSS selectors.
   - E.g. Prefer `.o-modal {}` over `div.o-modal {}`.
@@ -83,7 +89,7 @@ Codeguides should be learned, understood, and implemented at all times on a proj
 ----------
 
 ## Sass Specifics
-### Internal order of a .scss file
+### Internal Order Of An .scss File
 
 1. Imports
 2. Variables
@@ -183,33 +189,33 @@ Here’s a comprehensive example:
 
 ```scss
 .c-btn {
-    @extend %link--plain;
+  @extend %link--plain;
 
-    display: inline-block;
-    padding: 6px 12px;
+  display: inline-block;
+  padding: 6px 12px;
 
-    text-align: center;
-    font-weight: 600;
+  text-align: center;
+  font-weight: 600;
 
-    background-color: color(blue);
-    border-radius: 3px;
-    color: white;
+  background-color: color(blue);
+  border-radius: 3px;
+  color: white;
 
-    &::before {
-        content: '';
-    }
+  &::before {
+    content: '';
+  }
 
-    &:focus, &:hover {
-        box-shadow: 0 0 0 1px color(blue, .3);
-    }
+  &:focus, &:hover {
+    box-shadow: 0 0 0 1px color(blue, .3);
+  }
 
-    &--big {
-        padding: 12px 24px;
-    }
+  &--big {
+    padding: 12px 24px;
+  }
 
-    > .c-icon {
-        margin-right: 6px;
-    }
+  > .c-icon {
+    margin-right: 6px;
+  }
 }
 ```
 
@@ -221,11 +227,11 @@ Here’s a comprehensive example:
 - Prefer using nesting as a convenience to extend the parent selector over targeting nested elements. For example:
   ```scss
   .block {
-      padding: 24px;
+    padding: 24px;
 
-      &--mini {
-          padding: 12px;
-      }
+    &--mini {
+      padding: 12px;
+    }
   }
   ```
 
@@ -272,17 +278,17 @@ Choose your modifiers wisely. These two rules have very different meaning:
 - Use Sass’s nesting to manage BEM selectors like so:
   ```scss
   .block {
-      &--modifier { // compiles to .block--modifier
-          text-align: center;
-      }
+    &--modifier { // compiles to .block--modifier
+      text-align: center;
+    }
 
-      &__element { // compiles to .block__element
-          color: red;
+    &__element { // compiles to .block__element
+      color: red;
 
-          &--modifier { // compiles to .block__element--modifier
-              color: blue;
-          }
+      &--modifier { // compiles to .block__element--modifier
+        color: blue;
       }
+    }
   }
   ```
 
@@ -293,11 +299,20 @@ Choose your modifiers wisely. These two rules have very different meaning:
 There are a few reserved namespaces for classes to provide common and globally-available abstractions.
 
 - `.o-` for CSS objects. Objects are usually common design patterns (like the Flag object). Modifying these classes could have severe knock-on effects.
-- `.c-` for CSS components. Components are designed pieces of UI—think buttons, inputs, modals, and banners.
+- `.c-` for CSS components. Components are designed pieces of UI—like buttons, inputs, modals, and banners.
 - `.u-` for helpers and utilities. Utility classes are usually single-purpose and have high priority. Things like floating elements, trimming margins, etc.
 - `.is-, .has-` for stateful classes, a la [SMACSS](https://smacss.com/book/type-state). Use these classes for temporary, optional, or short-lived states and styles.
 - `._` for hacks. Classes with a hack namespace should be used when you need to force a style with `!important` or increasing specificity, should be temporary, and should not be bound onto.
 - `.t-` for theme classes. Pages with unique styles or overrides for any objects or components should make use of theme classes.
+
+- `.o-`: Signify that something is an Object, and that it may be used in any number of unrelated contexts to the one you can currently see it in. Making modifications to these types of class could potentially have knock-on effects in a lot of other unrelated places. Tread carefully.
+- `.c-`: Signify that something is a Component. This is a concrete, implementation-specific piece of UI. All of the changes you make to its styles should be detectable in the context you’re currently looking at. Modifying these styles should be safe and have no side effects.
+- `.u-`: Signify that this class is a Utility class. It has a very specific role (often providing only one declaration) and should not be bound onto or changed. It can be reused and is not tied to any specific piece of UI. You will probably recognise this namespace from libraries and methodologies like [SUIT](https://suitcss.github.io/).
+- `.t-`: Signify that a class is responsible for adding a Theme to a view. It lets us know that UI Components’ current cosmetic appearance may be due to the presence of a theme.
+- `.s-`: Signify that a class creates a new styling context or Scope. Similar to a Theme, but not necessarily cosmetic, these should be used sparingly—they can be open to abuse and lead to poor CSS if not used wisely.
+- `.is-`, `.has-`: Signify that the piece of UI in question is currently styled a certain way because of a state or condition. This stateful namespace is gorgeous, and comes from [SMACSS](https://smacss.com/). It tells us that the DOM currently has a temporary, optional, or short-lived style applied to it due to a certain state being invoked.
+- `._`: Signify that this class is the worst of the worst—a hack! Sometimes, although incredibly rarely, we need to add a class in our markup in order to force something to work. If we do this, we need to let others know that this class is less than ideal, and hopefully **temporary** (i.e. do not bind onto this).
+- `.js-`: Signify that this piece of the DOM has some behaviour acting upon it, and that JavaScript binds onto it to provide that behaviour. If you’re not a developer working with JavaScript, leave these well alone.
 
 ----------
 
@@ -310,31 +325,31 @@ You should always try to spot common code—padding, font sizes, layout patterns
 // HTML:
 // <div class="modal compact">...</div>
 .modal {
-    padding: 32px;
-    background-color: color(gray, x-light);
+  padding: 32px;
+  background-color: color(gray, x-light);
 
-    &.compact {
-        padding: 24px;
-    }
+  &.compact {
+    padding: 24px;
+  }
 }
 
 // Good code
 // HTML:
-// <div class="c-modal u-l-island">...</div>
-// <div class="c-modal u-l-isle">...</div>
+// <div class="c-modal u-l-large">...</div>
+// <div class="c-modal u-l-medium">...</div>
 
 // components/_modal.scss
 .c-modal {
-    background-color: color(gray, x-light);
+  background-color: color(gray, x-light);
 }
 
 // helpers/_layout.scss
-.u-l-island {
-    padding: 32px;
+.u-l-large {
+  padding: 32px;
 }
 
-.u-l-isle {
-    padding: 24px;
+.u-l-medium {
+  padding: 24px;
 }
 ```
 
@@ -346,11 +361,11 @@ Media queries should be within the CSS selector as per SMACSS
 
 ```scss
 .selector {
-      float: left;
+  float: left;
 
-      @media only screen and (max-width: 767px) {
-        float: none;
-      }
+  @media only screen and (max-width: 767px) {
+    float: none;
+  }
 }
 ```
 
@@ -360,10 +375,13 @@ Create variables for frequently used breakpoints
 $SCREEN_SM_MAX: "max-width: 767px";
 
 .selector {
-      float: left;
+  float: left;
 
-      @media only screen and ($SCREEN_SM_MAX) {
-        float: none;
-      }
+  @media only screen and ($SCREEN_SM_MAX) {
+    float: none;
+  }
 }
 ```
+
+## References
+
