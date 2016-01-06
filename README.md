@@ -1,16 +1,20 @@
 # (S)CSS Codeguide
-
 > “Every line of code should appear to be written by a single person, no matter the number of contributors.” -@mdo
 
 ## Table Of Contents
 - [Goals](#goals)
 - [Why A Codeguide](#why-a-codeguide)
-- [General](#general)
+- [General Principles](#general-principles)
   - [Do Not](#do-not)
   - [Spacing](#spacing)
   - [Formatting](#formatting)
 - [Sass Specifics](#sass-specifics)
-  - [Internal Order Of An .scss File](#internal-order-of-an-.scss-file)
+  - [Internal Order Of An .scss File](#internal-order-of-an-scss-file)
+  - [Variables](#variables)
+  - [Color](#color)
+  - [Experiments]
+  - [Rule Ordering]
+  - [Nesting]
 
 ## Goals
 - Keep stylesheets maintainable
@@ -36,32 +40,97 @@ A good codeguide, when well followed, will:
 
 Codeguides should be learned, understood, and implemented at all times on a project which is governed by one, and any deviation must be fully justified.
 
-## A Bit About Front-end Architecture
+## Principles
 
+### BEM
 
+**Block:** Unique, meaningful names for a logical unit of style. Avoid excessive shorthand.
+- Good: `.alert-box` or `.recents-intro` or `.button`
+- Bad: `.feature` or `.content` or `.button`
 
-## General
-### Do Not
+**Element:** styles that only apply to children of a block. Elements can also be blocks themselves. Class name is a concatenation of the block name, two underscores and the element name. Examples:
+- `.alert-box__close`
+- `.expanding-section__section`
+
+**Modifier:** override or extend the base styles of a block or element with modifier styles. Class name is a concatenation of the block (or element) name, two hyphens and the modifier name. Examples:
+- `.alert-box--success`
+- `.expanding-section--expanded`
+
+#### BEM Best practices
+
+A modifier should always be included with the base block.
+- Good: `<div class="my-block my-block--modifier">`
+- Bad: `<div class="my-block--modifier">`
+
+Don't create elements inside elements. If you find yourself needing this, consider converting your element into a block.
+- Bad: `.alert-box__close__button`
+
+If you're ever confused, ask for help in the Front-end HipChat room (or ask a friend—we're all in this together).
+
+----------
+
+### Selector Naming
+
+- Try to use [BEM-based](http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/) naming for your class selectors
+  - When using modifier classes, always require the base/unmodified class is present
+- Don't use Sass’s nesting to manage BEM selectors. It makes those selectors non-searchable. Prefer something like this:
+  ```scss
+  .block {
+    [...]
+  }
+
+  .block--modifier {
+    text-align: center;
+  }
+
+  .block__element {
+    color: red;
+  }
+
+  .block__element--modifier {
+    color: blue;
+  }
+  ```
+
+----------
+
+### Namespaced Classes
+
+There are a few reserved namespaces for classes to provide common and globally-available abstractions.
+
+- `.o-`: Signify that something is a CSS Object, and that it may be used in any number of unrelated contexts to the one you can currently see it in. Making modifications to these types of class could potentially have knock-on effects in a lot of other unrelated places. Tread carefully.
+- `.c-`: Signify that something is a Component. This is a concrete, implementation-specific piece of UI. All of the changes you make to its styles should be detectable in the context you’re currently looking at. Modifying these styles should be safe and have no side effects. Components are designed pieces of UI—like buttons, inputs, modals, and banners.
+- `.u-`: Signify that this class is a Utility class. It has a very specific role (often providing only one declaration) and should not be bound onto or changed. It can be reused and is not tied to any specific piece of UI. Things like floating elements, trimming margins, etc. You will probably recognise this namespace from libraries and methodologies like [SUIT](https://suitcss.github.io/).
+- `.is-`, `.has-`: Signify that the piece of UI in question is currently styled a certain way because of a state or condition. This stateful namespace is gorgeous, and comes from [SMACSS](https://smacss.com/). It tells us that the DOM currently has a temporary, optional, or short-lived style applied to it due to a certain state being invoked.
+- `._`: Signify that this class is the worst of the worst—a hack! Sometimes, although incredibly rarely, we need to add a class in our markup in order to force something to work. If we do this, we need to let others know that this class is less than ideal, and hopefully **temporary** (i.e. do not bind onto this).
+- `.js-`: Signify that this piece of the DOM has some behaviour acting upon it, and that JavaScript binds onto it to provide that behaviour. If you’re not a developer working with JavaScript, leave these well alone.
+
+----------
+
+### Avoid HTML tags
 
 - Avoid using HTML tags in CSS selectors.
   - E.g. Prefer `.o-modal {}` over `div.o-modal {}`.
-  - Always prefer using a class over HTML tags (with some exceptions like CSS resets).
+  - Always prefer using a class over HTML tags (with some exceptions like CSS resets and base styles).
+
+----------
+
+### No IDs allowed for CSS
+
 - Don’t use IDs in selectors.
   - `#header` is overly specific compared to, for example `.header` and is much harder to override.
   - Read more about the headaches associated with IDs in CSS [here](http://csswizardry.com/2011/09/when-using-ids-can-be-a-pain-in-the-class/).
-- Don’t nest more than 3 levels deep.
-  - Nesting selectors increases specificity, meaning that overriding any CSS set therein needs to be targeted with an even more specific selector. This quickly becomes a significant maintenance issue.
-- Avoid using nesting for anything other than pseudo selectors and state selectors.
-  - E.g. nesting `:hover`, `:focus`, `::before`, etc. is OK, but nesting selectors inside selectors should be avoided.
+
+----------
+
+### Specificity Wars
+
 - Don’t `!important`.
   - Ever.
   - If you must, leave a comment, and prioritize resolving specificity issues before resorting to `!important`.
   - `!important` greatly increases the power of a CSS rule, making it extremely tough to override in the future. It’s only possible to override with another `!important` rule later in the cascade.
-- Don’t use `margin-top`.
-  - Vertical margins [collapse](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing). Always prefer `padding-top` or`margin-bottom` on preceding elements.
-- Avoid shorthand properties (unless you really need them)
-  - It can be tempting to use, for instance, `background: #fff` instead of `background-color: #fff`, but doing so overrides other values encapsulated by the shorthand property. (In this case, `background-image` and its associative properties are set to “none.”
-  - This applies to all properties with a shorthand: border, margin, padding, font, etc.
+
+----------
 
 ### Spacing
 
@@ -91,10 +160,9 @@ Codeguides should be learned, understood, and implemented at all times on a proj
 ## Sass Specifics
 ### Internal Order Of An .scss File
 
-1. Imports
-2. Variables
-3. Base Styles
-4. Experiment Styles
+1. Local Variables
+2. Base Styles
+3. Experiment Styles
 
 Example:
 
@@ -103,27 +171,24 @@ Example:
 // Modal
 //------------------------------
 
-@import "../constants";
-@import "../helpers";
+$modal-namespace: "c-modal" !default;
+$modal-padding: 32px;
 
-$DBmodal-namespace: "c-modal" !default;
-$DBmodal-padding: 32px;
+$modal-background: #fff !default;
+$modal-background-alt: color(gray, x-light) !default;
 
-$DBmodal-background: #fff !default;
-$DBmodal-background-alt: color(gray, x-light) !default;
-
-.o-modal { ... }
+.c-modal { ... }
 
 // Many lines later...
 
 // EXPERIMENT: experiment-rule-name
-.o-modal--experiment { ... }
+.c-modal--experiment { ... }
 // END EXPERIMENT: experiment-rule-name
 ```
 
 ### Variables
 
-- Define all variables at the top of the file after the imports
+- Define all variables at the top of the file
 - Namespace local variables with the filename (SASS has no doc level scope)
   - eg `business_contact.scss` →`$business_contact_font_size: 14px;`
 - Local variables should be `$snake_lowercase`
@@ -132,7 +197,7 @@ $DBmodal-background-alt: color(gray, x-light) !default;
 ### Color
 
 - Use the defined color constants via the color function
-- Lowercase all hex values `#fffff`
+- Lowercase all hex values `#ffffff`
 - Limit alpha values to a maximum of two decimal places. Always use a leading zero.
 
 Example:
@@ -169,7 +234,7 @@ Wrap experiment styles with comments:
 
 Properties and nested declarations should appear in the following order, with line breaks between groups:
 
-1. Any `@` rules
+1. Any `@` rules like include
 2. Layout and box-model properties
   - margin, padding, box-sizing, overflow, position, display, width/height, etc.
 3. Typographic properties
@@ -188,33 +253,27 @@ Properties and nested declarations should appear in the following order, with li
 Here’s a comprehensive example:
 
 ```scss
-.c-btn {
-  @extend %link--plain;
+.c-button {
+  @include drop-shadow;
 
   display: inline-block;
-  padding: 6px 12px;
+  padding: 5px 10px;
 
   text-align: center;
   font-weight: 600;
 
-  background-color: color(blue);
+  background-color: color(grey, medium);
   border-radius: 3px;
-  color: white;
+  color: color(black);
+
+  cursor: pointer;
 
   &::before {
     content: '';
   }
 
   &:focus, &:hover {
-    box-shadow: 0 0 0 1px color(blue, .3);
-  }
-
-  &--big {
-    padding: 12px 24px;
-  }
-
-  > .c-icon {
-    margin-right: 6px;
+    background-color: color(grey, dark);
   }
 }
 ```
@@ -224,95 +283,13 @@ Here’s a comprehensive example:
 ## Nesting
 
 - As a general rule of thumb, avoid nesting selectors more than 3 levels deep
-- Prefer using nesting as a convenience to extend the parent selector over targeting nested elements. For example:
-  ```scss
-  .block {
-    padding: 24px;
-
-    &--mini {
-      padding: 12px;
-    }
-  }
-  ```
+  - Nesting selectors increases specificity, meaning that overriding any CSS set therein needs to be targeted with an even more specific selector. This quickly becomes a significant maintenance issue.
+- Avoid using nesting for anything other than pseudo selectors and state selectors.
+  - E.g. nesting `:hover`, `:focus`, `::before`, etc. is OK, but nesting selectors inside selectors should be avoided.
 
 Nesting can be really easily avoided by smart class naming (with the help of BEM) and avoiding bare tag selectors.
 
-----------
-
-## BEM
-
-Block: Unique, meaningful names for a logical unit of style. Avoid excessive shorthand.
-- Good: `.alert-box` or `.recents-intro` or `.button`
-- Bad: `.feature` or `.content` or `.btn`
-
-Element: styles that only apply to children of a block. Elements can also be blocks themselves. Class name is a concatenation of the block name, two underscores and the element name. Examples:
-- `.alert-box__close`
-- `.expanding-section__section`
-
-Modifier: override or extend the base styles of a block or element with modifier styles. Class name is a concatenation of the block (or element) name, two hyphens and the modifier name. Examples:
-- `.alert-box--success`
-- `.expanding-section--expanded`
-
-### BEM Best practices
-
-Don't `@extend` block modifiers with the block base.
-- Good: `<div class="my-block my-block--modifier">`
-- Bad: `<div class="my-block--modifier">`
-
-Don't create elements inside elements. If you find yourself needing this, consider converting your element into a block.
-- Bad: `.alert-box__close__button`
-
-Choose your modifiers wisely. These two rules have very different meaning:
-
-```scss
-.block--modifier .block__element { color: red; }
-.block__element--modifier { color: red; }
-```
-
-----------
-
-## Selector Naming
-
-- Try to use [BEM-based](http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/) naming for your class selectors
-  - When using modifier classes, always require the base/unmodified class is present
-- Use Sass’s nesting to manage BEM selectors like so:
-  ```scss
-  .block {
-    &--modifier { // compiles to .block--modifier
-      text-align: center;
-    }
-
-    &__element { // compiles to .block__element
-      color: red;
-
-      &--modifier { // compiles to .block__element--modifier
-        color: blue;
-      }
-    }
-  }
-  ```
-
-----------
-
-## Namespaced Classes
-
-There are a few reserved namespaces for classes to provide common and globally-available abstractions.
-
-- `.o-` for CSS objects. Objects are usually common design patterns (like the Flag object). Modifying these classes could have severe knock-on effects.
-- `.c-` for CSS components. Components are designed pieces of UI—like buttons, inputs, modals, and banners.
-- `.u-` for helpers and utilities. Utility classes are usually single-purpose and have high priority. Things like floating elements, trimming margins, etc.
-- `.is-, .has-` for stateful classes, a la [SMACSS](https://smacss.com/book/type-state). Use these classes for temporary, optional, or short-lived states and styles.
-- `._` for hacks. Classes with a hack namespace should be used when you need to force a style with `!important` or increasing specificity, should be temporary, and should not be bound onto.
-- `.t-` for theme classes. Pages with unique styles or overrides for any objects or components should make use of theme classes.
-
-- `.o-`: Signify that something is an Object, and that it may be used in any number of unrelated contexts to the one you can currently see it in. Making modifications to these types of class could potentially have knock-on effects in a lot of other unrelated places. Tread carefully.
-- `.c-`: Signify that something is a Component. This is a concrete, implementation-specific piece of UI. All of the changes you make to its styles should be detectable in the context you’re currently looking at. Modifying these styles should be safe and have no side effects.
-- `.u-`: Signify that this class is a Utility class. It has a very specific role (often providing only one declaration) and should not be bound onto or changed. It can be reused and is not tied to any specific piece of UI. You will probably recognise this namespace from libraries and methodologies like [SUIT](https://suitcss.github.io/).
-- `.t-`: Signify that a class is responsible for adding a Theme to a view. It lets us know that UI Components’ current cosmetic appearance may be due to the presence of a theme.
-- `.s-`: Signify that a class creates a new styling context or Scope. Similar to a Theme, but not necessarily cosmetic, these should be used sparingly—they can be open to abuse and lead to poor CSS if not used wisely.
-- `.is-`, `.has-`: Signify that the piece of UI in question is currently styled a certain way because of a state or condition. This stateful namespace is gorgeous, and comes from [SMACSS](https://smacss.com/). It tells us that the DOM currently has a temporary, optional, or short-lived style applied to it due to a certain state being invoked.
-- `._`: Signify that this class is the worst of the worst—a hack! Sometimes, although incredibly rarely, we need to add a class in our markup in order to force something to work. If we do this, we need to let others know that this class is less than ideal, and hopefully **temporary** (i.e. do not bind onto this).
-- `.js-`: Signify that this piece of the DOM has some behaviour acting upon it, and that JavaScript binds onto it to provide that behaviour. If you’re not a developer working with JavaScript, leave these well alone.
+If a nested block of Sass is longer than 50 lines, there is a good chance it doesn't fit on one code editor screen, and starts becoming difficult to understand. The whole point of nesting is convenience and to assist in mental grouping. Don't use it if it hurts that.
 
 ----------
 
@@ -353,35 +330,16 @@ You should always try to spot common code—padding, font sizes, layout patterns
 }
 ```
 
-----------
+## (S)CSS ProTips™
 
-## Media Queries
+### Margin-Top
+- Don’t use `margin-top`.
+  - Vertical margins [collapse](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing). Always prefer `padding-top` or`margin-bottom` on preceding elements.
 
-Media queries should be within the CSS selector as per SMACSS
+### Shorthand Properties
 
-```scss
-.selector {
-  float: left;
-
-  @media only screen and (max-width: 767px) {
-    float: none;
-  }
-}
-```
-
-Create variables for frequently used breakpoints
-
-```scss
-$SCREEN_SM_MAX: "max-width: 767px";
-
-.selector {
-  float: left;
-
-  @media only screen and ($SCREEN_SM_MAX) {
-    float: none;
-  }
-}
-```
+- Avoid shorthand properties (unless you really need them)
+  - It can be tempting to use, for instance, `background: #fff` instead of `background-color: #fff`, but doing so overrides other values encapsulated by the shorthand property. (In this case, `background-image` and its associative properties are set to “none.”
+  - This applies to all properties with a shorthand: border, margin, padding, font, etc.
 
 ## References
-
