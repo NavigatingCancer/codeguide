@@ -3,8 +3,8 @@
 
 ## Table Of Contents
 - [Goals](#goals)
-- [Why A Codeguide](#why-a-codeguide)
 - [General Principles](#general-principles)
+  - [BEM](#bem)
   - [Do Not](#do-not)
   - [Spacing](#spacing)
   - [Formatting](#formatting)
@@ -12,33 +12,15 @@
   - [Internal Order Of An .scss File](#internal-order-of-an-scss-file)
   - [Variables](#variables)
   - [Color](#color)
-  - [Experiments]
-  - [Rule Ordering]
-  - [Nesting]
+  - [Experiments](#experiments)
+  - [Rule Ordering](#rule-ordering)
+  - [Nesting](#nesting)
 
 ## Goals
 - Keep stylesheets maintainable
 - Keep code transparent, sane, and readable
 - Keep stylesheets scalable
 - Minimize side effects
-
-## Why A Codeguide?
-A codeguide is a valuable tool for teams who:
-
-- Build and maintain products for a reasonable length of time.
-- Have developers of differing abilities and specialisms.
-- Have a number of different developers working on a product at any given time.
-- On-board new staff regularly.
-- Have a number of codebases that developers dip in and out of.
-
-A good codeguide, when well followed, will:
-
-- Set the standard for code quality across a codebase.
-- Promote consistency and sanity across codebases.
-- Give developers a feeling of familiarity across codebases.
-- Increase productivity.
-
-Codeguides should be learned, understood, and implemented at all times on a project which is governed by one, and any deviation must be fully justified.
 
 ## Principles
 
@@ -55,6 +37,30 @@ Codeguides should be learned, understood, and implemented at all times on a proj
 **Modifier:** override or extend the base styles of a block or element with modifier styles. Class name is a concatenation of the block (or element) name, two hyphens and the modifier name. Examples:
 - `.alert-box--success`
 - `.expanding-section--expanded`
+
+Absolutely every class in a project fits into one of these categories, which is why BEM is so great—it’s incredibly simple and straightforward.
+
+The point of BEM is to give a lot more transparency and clarity in your markup. BEM tells developers how classes relate to each other, which is particularly useful in complex or deep pieces of DOM. For example, if I were to ask you to delete all of the user-related classes in the following chunk of HTML, which ones would you get rid of?
+
+```html
+<div class="media  user  premium">
+  <img src="" alt="" class="img  photo  avatar" />
+  <p class="body  bio">...</p>
+</div>
+```
+
+Well we’d definitely start with user, but anything beyond that would have to be a guess, educated or otherwise. However, if we rewrote it with BEM:
+
+```html
+<div class="media  user  user--premium">
+  <img src="" alt="" class="media__img  user__photo  avatar" />
+  <p class="media__body  user__bio">...</p>
+</div>
+```
+
+Here we can instantly see that user, `user--premium`, `user__photo`, and `user__bio` are all related to each other. We can also see that `media`, `media__img`, and `media__body` are related, and that `avatar` is just a lone Block on its own with no Elements or Modifiers.
+
+This level of detail from our classes alone is great! It allows us to make much safer and more informed decisions about what things do and how we can use, reuse, change, or remove them.
 
 #### BEM Best practices
 
@@ -96,6 +102,10 @@ If you're ever confused, ask for help in the Front-end HipChat room (or ask a fr
 
 ### Namespaced Classes
 
+The one thing missing from BEM is that it only tells us what classes to in relative terms, as in, how classes are related to each other. They don’t really give us any idea of how things behave, act, or should be implemented in a global and non-relative sense.
+
+Thus, we prefix every class in a codebase with a certain string in order to explain to developers what kind of job it does. This Hungarian notation-like naming allows us to ascertain exactly what kind of job a class might have, how and where we might be able to reuse it (if at all), whether or not we can modify it, and much more.
+
 There are a few reserved namespaces for classes to provide common and globally-available abstractions.
 
 - `.o-`: Signify that something is a CSS Object, and that it may be used in any number of unrelated contexts to the one you can currently see it in. Making modifications to these types of class could potentially have knock-on effects in a lot of other unrelated places. Tread carefully.
@@ -105,6 +115,26 @@ There are a few reserved namespaces for classes to provide common and globally-a
 - `._`: Signify that this class is the worst of the worst—a hack! Sometimes, although incredibly rarely, we need to add a class in our markup in order to force something to work. If we do this, we need to let others know that this class is less than ideal, and hopefully **temporary** (i.e. do not bind onto this).
 - `.js-`: Signify that this piece of the DOM has some behaviour acting upon it, and that JavaScript binds onto it to provide that behaviour. If you’re not a developer working with JavaScript, leave these well alone.
 
+(This list is to get us started. In the future, we may find the need for another type of namespace.)
+
+From our previous example:
+
+```html
+<div class="media  user  user--premium">
+  <img src="" alt="" class="media__img  user__photo  avatar" />
+  <p class="media__body  user__bio">...</p>
+</div>
+```
+
+We now have:
+
+```html
+<div class="o-media  c-user  c-user--premium">
+  <img src="" alt="" class="o-media__img  c-user__photo  c-avatar" />
+  <p class="o-media__body  c-user__bio">...</p>
+</div>
+```
+
 ----------
 
 ### Avoid HTML tags
@@ -112,6 +142,59 @@ There are a few reserved namespaces for classes to provide common and globally-a
 - Avoid using HTML tags in CSS selectors.
   - E.g. Prefer `.o-modal {}` over `div.o-modal {}`.
   - Always prefer using a class over HTML tags (with some exceptions like CSS resets and base styles).
+
+For example:
+
+```scss
+div.sidebar .login-box a.btn span {
+}
+```
+
+In this compound selector, the subject is `span`, and the conditions are `IF (inside .btn) AND IF (on a) AND IF (inside .login-box) AND IF (inside .sidebar) AND IF (on div)`.
+
+That is to say, every component part of a selector is an `if` statement—something that needs to be satisfied (or not) before the selector will match.
+
+This subtle shift in the way we look at how we write our selectors can have a huge impact on their quality. Would we really ever write (pseudo code):
+
+```scss
+@if exists(span) {
+
+  @if is-inside(.btn) {
+
+    @if is-on(a) {
+
+      @if is-inside(.login-box) {
+
+        @if is-inside(.sidebar) {
+
+          @if is-on(div) {
+
+            # Do this.
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+}
+```
+Probably not. That seems so indirect and convoluted. We’d probably just do this:
+
+```scss
+@if exists(.btn-text) {
+
+  # Do this.
+
+}
+```
+
+Every time we nest or qualify a selector, we are adding another if statement to it. This in turn increases its Cyclomatic Complexity.
+
 
 ----------
 
