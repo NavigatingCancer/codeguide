@@ -5,7 +5,12 @@
 - [Goals](#goals)
 - [Principles](#principles)
   - [BEM](#bem)
-  - [Do Not](#do-not)
+    -[BEM Best Practices](#bem-best-practices)
+  - [Selector Naming](#selector-naming)
+  - [Namespaced Classes](#namespaced-classes)
+  - [Avoid HTML tags](#avoid-html-tags)
+  - [No IDs allowed for CSS](#no-ids-allowed-for-css)
+  - [Specificity Wars](#specificity-wars)
   - [Spacing](#spacing)
   - [Formatting](#formatting)
 - [Sass Specifics](#sass-specifics)
@@ -81,7 +86,7 @@ If you're ever confused, ask for help in the Front-end HipChat room (or ask a fr
 
 ### Selector Naming
 
-- Try to use [BEM-based](http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/) naming for your class selectors
+- Use [BEM-based](http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/) naming for your class selectors
   - When using modifier classes, always require the base/unmodified class is present
 - Don't use Sass’s nesting to manage BEM selectors. It makes those selectors non-searchable. Prefer something like this:
   ```scss
