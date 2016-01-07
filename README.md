@@ -3,7 +3,7 @@
 
 ## Table Of Contents
 - [Goals](#goals)
-- [General Principles](#general-principles)
+- [Principles](#principles)
   - [BEM](#bem)
   - [Do Not](#do-not)
   - [Spacing](#spacing)
@@ -15,6 +15,10 @@
   - [Experiments](#experiments)
   - [Rule Ordering](#rule-ordering)
   - [Nesting](#nesting)
+- [Separation Of Concerns](#separation-of-concerns-one-thing-well)
+- [(S)CSS ProTips](#scss-protips)
+  - [margin-top](#margin-top)
+  - [Shorthand Properties](#shorthand-properties)
 
 ## Goals
 - Keep stylesheets maintainable
@@ -313,7 +317,7 @@ Wrap experiment styles with comments:
 
 ----------
 
-## Rule Ordering
+### Rule Ordering
 
 Properties and nested declarations should appear in the following order, with line breaks between groups:
 
@@ -363,7 +367,7 @@ Here’s a comprehensive example:
 
 ----------
 
-## Nesting
+### Nesting
 
 - As a general rule of thumb, avoid nesting selectors more than 3 levels deep
   - Nesting selectors increases specificity, meaning that overriding any CSS set therein needs to be targeted with an even more specific selector. This quickly becomes a significant maintenance issue.
@@ -424,5 +428,3 @@ You should always try to spot common code—padding, font sizes, layout patterns
 - Avoid shorthand properties (unless you really need them)
   - It can be tempting to use, for instance, `background: #fff` instead of `background-color: #fff`, but doing so overrides other values encapsulated by the shorthand property. (In this case, `background-image` and its associative properties are set to “none.”
   - This applies to all properties with a shorthand: border, margin, padding, font, etc.
-
-## References
