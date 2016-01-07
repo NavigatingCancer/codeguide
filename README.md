@@ -5,7 +5,7 @@
 - [Goals](#goals)
 - [Principles](#principles)
   - [BEM](#bem)
-    -[BEM Best Practices](#bem-best-practices)
+  -[BEM Best Practices](#bem-best-practices)
   - [Selector Naming](#selector-naming)
   - [Namespaced Classes](#namespaced-classes)
   - [Avoid HTML tags](#avoid-html-tags)
@@ -71,7 +71,7 @@ Here we can instantly see that user, `user--premium`, `user__photo`, and `user__
 
 This level of detail from our classes alone is great! It allows us to make much safer and more informed decisions about what things do and how we can use, reuse, change, or remove them.
 
-#### BEM Best practices
+### BEM Best practices
 
 A modifier should always be included with the base block.
 - Good: `<div class="my-block my-block--modifier">`
