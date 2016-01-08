@@ -178,7 +178,7 @@ This subtle shift in the way we look at how we write our selectors can have a hu
 
           @if is-on(div) {
 
-            # Do this.
+            // Do this
 
           }
 
@@ -197,7 +197,7 @@ Probably not. That seems so indirect and convoluted. We’d probably just do thi
 ```scss
 @if exists(.btn-text) {
 
-  # Do this.
+  // Do this
 
 }
 ```
