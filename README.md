@@ -11,6 +11,7 @@
   - [Avoid HTML tags](#avoid-html-tags)
   - [No IDs allowed for CSS](#no-ids-allowed-for-css)
   - [Specificity Wars](#specificity-wars)
+  - [Avoid Undoing Styles](#avoid-undoing-styles)
   - [Spacing](#spacing)
   - [Formatting](#formatting)
 - [Sass Specifics](#sass-specifics)
@@ -20,6 +21,7 @@
   - [Experiments](#experiments)
   - [Rule Ordering](#rule-ordering)
   - [Nesting](#nesting)
+  - [Avoid @extend](#avoid-extend)
 - [Separation Of Concerns](#separation-of-concerns-one-thing-well)
 - [(S)CSS ProTips](#scss-protips)
   - [margin-top](#margin-top)
@@ -224,6 +226,70 @@ Every time we nest or qualify a selector, we are adding another if statement to 
 
 ----------
 
+### Avoid Undoing Styles
+
+Any CSS that unsets styles (apart from in a reset) should start ringing alarm bells right away. The very nature of CSS is that things will, well, cascade and inherit from things defined previously. Rulesets should only ever inherit and add to previous ones, never undo.
+
+Any CSS declarations like these:
+
+```scss
+border-bottom: none;
+padding: 0;
+float: none;
+margin-left: 0;
+```
+
+…are typically bad news. If you are having to remove borders, you probably applied them too early. This is really hard to explain so I’ll go with a simple example:
+
+```scss
+h2 {
+    font-size: 2em;
+    margin-bottom: 0.5em;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid #ccc;
+}
+```
+
+Here we’re giving all h2s our usual font-size and margin for spacing, but also a bit of padding and a keyline on the bottom edge to visually separate it from the next element on the page. But, perhaps we have a circumstance in which we don’t want that keyline, perhaps we have a situation where we want a h2 to not have that border and padding. We’d likely end up with something like this:
+
+```scss
+h2 {
+    font-size: 2em;
+    margin-bottom: 0.5em;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid #ccc;
+}
+
+.no-border {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+```
+
+Here we have ten lines of CSS and one ugly class name. What would have been better is this:
+
+```scss
+h2 {
+    font-size: 2em;
+    margin-bottom: 0.5em;
+}
+
+.headline {
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid #ccc;
+}
+```
+
+Here we have eight lines of CSS, no undoing anything, and a nice, sensible class name.
+
+As you go down a stylesheet you should only ever be adding styles, not taking away. If you find you are having to undo styling as you go down your document the chances are you jumped the gun and started adding too much too soon.
+
+Imagine CSS like this over tens of thousands of lines… that’s a lot of bloat and a lot of unnecessary undoing. Peg things onto simpler things that came before it, do not start too complex and risk having to undo your work later on; you’ll end up writing more CSS to achieve less styling.
+
+Sometimes you'll have to override styles (especially in old code). This means, if the pain of rewriting the old code is greater than just overriding it, use your best judgment. The goal is to make the styles additive and lean.
+
+----------
+
 ### Spacing
 
 - Two spaces for indenting code
@@ -382,6 +448,12 @@ Here’s a comprehensive example:
 Nesting can be really easily avoided by smart class naming (with the help of BEM) and avoiding bare tag selectors.
 
 If a nested block of Sass is longer than 50 lines, there is a good chance it doesn't fit on one code editor screen, and starts becoming difficult to understand. The whole point of nesting is convenience and to assist in mental grouping. Don't use it if it hurts that.
+
+----------
+
+### Avoid @extend
+
+`@extend` may seem like a benefit to selector performance, but often results in unrelated elements being intimately tied together. `@mixins` help to encapsulate code but still keep our writing of it very DRY. When gzipped, the performance difference of `@mixin` vs `@extend` is negligible. `@mixins` make for easier maintenance (and we'll never be in danger of hitting IE's 4096 selector cap).
 
 ----------
 
